@@ -1,217 +1,202 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>6枚デッキ → 3枚手札 デモ</title>
+<title>カード選択 → デッキに追加</title>
 <style>
-  :root{
-    --bg:#0f1724;
-    --card-bg:#fff;
-    --muted:#9aa4b2;
-    --accent:#2dd4bf;
+  :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+  body{margin:0;background:#0b1220;color:#eef;padding:20px;box-sizing:border-box}
+  h1{font-size:18px;margin:0 0 12px}
+  .board{
+    display:flex;gap:12px;justify-content:center;margin-bottom:18px;
+    flex-wrap:wrap;
   }
-  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#071428 0%,var(--bg) 100%);color: #e6eef6;}
-  .app{
-    max-width:860px;margin:40px auto;padding:24px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    box-shadow: 0 6px 30px rgba(2,6,23,0.6);
-  }
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  header h1{font-size:18px;margin:0}
-  .controls{display:flex;gap:8px}
-  button{
-    background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;color:inherit;cursor:pointer;font-weight:600;
-  }
-  button.primary{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#052023;border:none}
-  .board{display:flex;gap:18px;flex-wrap:wrap}
-  .panel{flex:1;min-width:260px;background:rgba(255,255,255,0.02);padding:16px;border-radius:10px}
-  .panel h2{margin:0 0 12px 0;font-size:14px;color:var(--muted)}
-  .deck-area{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-  .deck-count{font-size:12px;color:var(--muted)}
-  .deck-card{
-    width:120px;height:160px;border-radius:10px;background:linear-gradient(180deg,#0ea5a5,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:40px;color:#052023;
-    box-shadow:0 8px 18px rgba(2,6,23,0.5);border:4px solid rgba(255,255,255,0.08);
-  }
-  .hand{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
   .card{
-    width:120px;height:160px;border-radius:10px;background:var(--card-bg);color:#052023;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    box-shadow: 0 6px 20px rgba(2,6,23,0.35);font-weight:700;
+    width:28vw; max-width:140px; height:40vw; max-height:200px;
+    background:linear-gradient(180deg,#fff 0,#ddd 100%); color:#111;
+    border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,.5);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    user-select:none; touch-action: manipulation; cursor:pointer; position:relative;
+    transition: transform .14s, box-shadow .14s, opacity .14s;
   }
-  .card .title{font-size:14px;margin-top:8px;color:#064; font-weight:700}
-  .small{font-size:12px;color:var(--muted)}
-  footer{margin-top:16px;font-size:13px;color:var(--muted);text-align:right}
-  @media (max-width:640px){
-    .deck-card,.card{width:96px;height:128px;font-size:34px}
+  .card.disabled{opacity:.45; cursor:default; transform: translateY(6px) scale(.98);}
+  .card .title{font-weight:700;font-size:14px;margin-bottom:6px}
+  .card .txt{font-size:12px; text-align:center; padding:0 6px}
+  .card .tag{position:absolute; top:8px; right:8px; background:#222;color:#fff;font-size:11px;padding:4px 6px;border-radius:6px;}
+  .info{display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+  button{font-size:14px;padding:8px 12px;border-radius:8px;border:0;background:#2a8; color:#052; font-weight:700; cursor:pointer}
+  button:disabled{opacity:.5; cursor:default}
+  .deck{
+    max-width:720px;margin:0 auto;background:rgba(255,255,255,0.04);padding:12px;border-radius:8px;
+  }
+  .deck h2{margin:0 0 8px;font-size:15px;color:#fff}
+  .deckList{display:flex;flex-wrap:wrap;gap:8px}
+  .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)}
+  .log{font-size:13px;opacity:.85;margin-top:8px}
+  @media(min-width:700px){
+    .card{width:160px;height:220px}
   }
 </style>
 </head>
 <body>
-<div class="app" role="application" aria-label="カードデモ">
-  <header>
-    <h1>6枚デッキ → 3枚手札 デモ</h1>
-    <div class="controls">
-      <button id="shuffleBtn">シャッフル</button>
-      <button class="primary" id="drawBtn">3枚を引く</button>
-      <button id="resetBtn">リセット</button>
-    </div>
-  </header>
 
-  <div class="board">
-    <section class="panel" aria-labelledby="deck-label">
-      <h2 id="deck-label">デッキ</h2>
-      <div class="deck-area">
-        <div id="deckVisual" class="deck-card" aria-hidden="true">🂠</div>
-        <div class="deck-count"><span id="deckCount">6</span> 枚</div>
-        <div class="small">残りのカード</div>
-      </div>
-    </section>
+<h1>場のカードから1枚選んでデッキに加える</h1>
 
-    <section class="panel" aria-labelledby="hand-label">
-      <h2 id="hand-label">手札</h2>
-      <div id="hand" class="hand" role="list" aria-label="手札エリア">
-        <!-- カードがここに入る -->
-      </div>
-      <div style="margin-top:10px" class="small">手札は最大3枚</div>
-    </section>
+<div class="info">
+  <div>場にあるカード：<span id="cardsLeft">3</span></div>
+  <button id="resetBtn">場をリセット</button>
+  <button id="shuffleDeckBtn">デッキをシャッフル</button>
+  <button id="clearDeckBtn">デッキをクリア</button>
+</div>
 
-    <section class="panel" aria-labelledby="discard-label">
-      <h2 id="discard-label">捨て札 / 履歴</h2>
-      <div id="discard" class="hand" role="list" aria-label="捨て札エリア"></div>
-      <div class="small" style="margin-top:10px">引かれたカードの履歴</div>
-    </section>
-  </div>
+<!-- 場 -->
+<div class="board" id="board"></div>
 
-  <footer>カードは簡単に差し替え可能です。JS の <code>initialDeck</code> を編集してください。</footer>
+<!-- デッキ表示 -->
+<div class="deck">
+  <h2>あなたのデッキ（上から追加されます）</h2>
+  <div class="deckList" id="deckList"></div>
+  <div class="log" id="log"></div>
 </div>
 
 <script>
 /*
-  デモのロジック：
-  - initialDeck: 6枚のカード（オブジェクト {id,name,emoji}）
-  - shuffleDeck(): Fisher-Yatesでシャッフル
-  - drawThree(): デッキに3枚以上あれば3枚手札へ（デッキから削除して捨て札に残す）
-  - resetDeck(): 元に戻す
+  使い方：
+  - 場に表示される3枚のカードから1枚タップ（クリック）すると、
+    そのカードがデッキ（右下）に追加され、場からは消えます。
+  - 「場をリセット」で別の3枚が出ます（デッキはそのまま）。
+  - 「デッキをシャッフル／クリア」などのボタンあり。
 */
 
-const initialDeck = [
-  {id: 1, name: "炎の使者", emoji: "🔥"},
-  {id: 2, name: "氷の守護", emoji: "❄️"},
-  {id: 3, name: "風の旅人", emoji: "🌪️"},
-  {id: 4, name: "大地の巨人", emoji: "⛰️"},
-  {id: 5, name: "光の精霊", emoji: "✨"},
-  {id: 6, name: "影の刺客", emoji: "🗡️"}
+// 例として使うカードプール（好きに変えてOK）
+const CARD_POOL = [
+  { id: 'c1', name: '斬撃の剣', text: '敵1体に2ダメージ' },
+  { id: 'c2', name: '回復ハーブ', text: '自分を3回復' },
+  { id: 'c3', name: '防御の盾', text: '1ターン防御＋2' },
+  { id: 'c4', name: '爆裂の書', text: '全体に1ダメージ' },
+  { id: 'c5', name: '強化薬', text: '次の攻撃+2' },
+  { id: 'c6', name: '召喚:ゴブリン', text: 'ゴブリンを1体召喚' },
+  { id: 'c7', name: '土の鎧', text: '自身の防御3（持続）' },
+  { id: 'c8', name: '雷の一撃', text: '敵1体に4ダメージ（確率）' },
 ];
 
-let deck = [];
-let hand = [];
-let discard = [];
+// 状態
+let boardCards = [];   // 場にあるカードオブジェクト配列（最大3）
+let deck = [];         // デッキ（配列の先頭が一番上に追加されたカード）
+const boardEl = document.getElementById('board');
+const cardsLeftEl = document.getElementById('cardsLeft');
+const deckListEl = document.getElementById('deckList');
+const logEl = document.getElementById('log');
 
-const deckCountEl = document.getElementById('deckCount');
-const handEl = document.getElementById('hand');
-const discardEl = document.getElementById('discard');
-const shuffleBtn = document.getElementById('shuffleBtn');
-const drawBtn = document.getElementById('drawBtn');
-const resetBtn = document.getElementById('resetBtn');
-
-function updateUI(){
-  deckCountEl.textContent = deck.length;
-  // 手札表示（role=list item）
-  handEl.innerHTML = '';
-  hand.forEach(card => {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.setAttribute('role','listitem');
-    div.innerHTML = `<div style="font-size:48px">${card.emoji}</div><div class="title">${card.name}</div>`;
-    // 右クリックでカードを捨てる（例）
-    div.addEventListener('contextmenu', e => { e.preventDefault(); discardCard(card.id); });
-    handEl.appendChild(div);
-  });
-  // 捨て札
-  discardEl.innerHTML = '';
-  discard.forEach(card => {
-    const d = document.createElement('div');
-    d.className = 'card';
-    d.style.opacity = 0.88;
-    d.setAttribute('role','listitem');
-    d.innerHTML = `<div style="font-size:40px">${card.emoji}</div><div class="title">${card.name}</div>`;
-    discardEl.appendChild(d);
-  });
-
-  // ボタンの状態制御
-  drawBtn.disabled = deck.length < 3;
-  shuffleBtn.disabled = deck.length === 0;
-}
-
-// Fisher-Yates シャッフル（インプレース）
-function shuffleArray(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    // ランダムインデックス（0..i）
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+// ユーティリティ：配列をシャッフル
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
   }
   return arr;
 }
 
-function shuffleDeck(){
-  deck = shuffleArray(deck);
-  updateUI();
+// 初期化：場に3枚出す
+function dealBoard(){
+  // pick 3 random distinct from CARD_POOL
+  const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
+  boardCards = pool.slice(0,3).map(c => ({...c}));
+  renderBoard();
+  updateInfo();
 }
 
-// 引く（3枚）
-// 引いたカードは手札に入れる（既に手札がある場合は上書きではなく追加）
-// ここでは手札上限を3枚にして、超えないようにする
-function drawThree(){
-  if(deck.length < 3) return;
-  // 既に手札がある場合は先に手札を捨て札へ（ゲーム仕様次第で変更可）
-  // 今回は「新しい手札を完全に入れ替える」動作にする
-  while(hand.length) {
-    discard.push(hand.pop());
+// ボード描画
+function renderBoard(){
+  boardEl.innerHTML = '';
+  boardCards.forEach((c, idx) => {
+    const cardEl = document.createElement('div');
+    cardEl.className = 'card';
+    cardEl.dataset.idx = idx;
+    cardEl.innerHTML = `
+      <div class="tag">選ぶ</div>
+      <div class="title">${c.name}</div>
+      <div class="txt">${c.text}</div>
+    `;
+    // タップ / クリックで選択（選べるのは有効なカードのみ）
+    cardEl.addEventListener('click', ()=> tryPickCard(idx));
+    // タッチでも反応
+    cardEl.addEventListener('touchstart', ()=> tryPickCard(idx));
+    boardEl.appendChild(cardEl);
+  });
+
+  // 場が空ならメッセージ
+  if(boardCards.length===0){
+    const msg = document.createElement('div');
+    msg.style.color='#fff';
+    msg.style.opacity='0.9';
+    msg.textContent = '場にカードがありません（リセットで補充）';
+    boardEl.appendChild(msg);
   }
-  const drawn = deck.splice(0, 3); // 山の上から3枚
-  hand = drawn.slice(); // 手札に
-  // 引いたカードは捨て札履歴にも残す（履歴として）
-  // ※ 既に上で全手札を捨てたので履歴には残らない。代わりに履歴に追加するデザインに
-  discard = discard.concat(drawn.map(c => ({...c})));
-  updateUI();
+  cardsLeftEl.textContent = boardCards.length;
 }
 
-function discardCard(cardId){
-  // 手札から個別に捨てる（右クリックで呼ばれる）
-  const idx = hand.findIndex(c => c.id === cardId);
-  if(idx === -1) return;
-  const [removed] = hand.splice(idx,1);
-  discard.push(removed);
-  updateUI();
+// カードを選べるか試す（選択処理）
+function tryPickCard(idx){
+  const card = boardCards[idx];
+  if(!card) return; // 既に消されている
+  // ここに制限を追加可能（例：コスト支払い、ターン制など）
+  pickCard(idx);
 }
 
-function resetDeck(){
-  deck = initialDeck.map(c => ({...c}));
-  hand = [];
-  discard = [];
-  updateUI();
+// カードをピックしてデッキに加える
+function pickCard(idx){
+  const [card] = boardCards.splice(idx,1); // 場から取り除く
+  // デッキの先頭に追加（上に積むイメージ）
+  deck.unshift(card);
+  log(`"${card.name}" をデッキに追加しました。`);
+  renderBoard();
+  renderDeck();
 }
 
-// 初期化
-resetDeck();
+// デッキ描画
+function renderDeck(){
+  deckListEl.innerHTML = '';
+  if(deck.length===0){
+    deckListEl.innerHTML = '<div style="opacity:.8">デッキ：空</div>';
+    return;
+  }
+  deck.forEach((c,i)=>{
+    const el = document.createElement('div');
+    el.className = 'mini';
+    el.textContent = `${i+1}. ${c.name}`;
+    deckListEl.appendChild(el);
+  });
+}
 
-// イベント
-shuffleBtn.addEventListener('click', () => {
-  shuffleDeck();
+// ログ
+function log(text){
+  logEl.textContent = text;
+  // 短時間で消す（オプション）
+  setTimeout(()=>{ if(logEl.textContent===text) logEl.textContent=''; }, 3000);
+}
+
+// UI ボタン
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  dealBoard();
 });
-drawBtn.addEventListener('click', () => {
-  drawThree();
+document.getElementById('shuffleDeckBtn').addEventListener('click', ()=>{
+  deck = shuffle(deck);
+  renderDeck();
+  log('デッキをシャッフルしました。');
 });
-resetBtn.addEventListener('click', () => {
-  resetDeck();
-  shuffleDeck();
+document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
+  if(!confirm('デッキを空にしますか？')) return;
+  deck = [];
+  renderDeck();
+  log('デッキをクリアしました。');
 });
 
-/* --- 追加案内（コメント）---
- - カードに画像を使う場合は initialDeck の要素に image: "url" を追加して
-   card.innerHTML を <img src="..."> に差し替えてください。
- - サーバーでデッキを管理するなら fetch() で API と同期させると良いです。
- - カード効果やクリックで使用 etc. を足せば本格的なゲームになります。
-*/
+// 初期表示
+dealBoard();
+renderDeck();
+
 </script>
 </body>
 </html>
