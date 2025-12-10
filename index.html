@@ -35,7 +35,7 @@
     max-width:720px;margin:0 auto;background:rgba(255,255,255,0.04);padding:12px;border-radius:8px; /* デッキ大枠 */
   }
   .deckList{display:flex;flex-wrap:wrap;gap:8px}  /* デッキリスト枠 */
-  .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)}　/* デッキカード */
+  .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)} /* デッキカード */
   
   /* ●--------スマホ対応--------● */
   @media(min-width:700px){
@@ -45,9 +45,11 @@
 </head>
 
 <body>
-<!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：14</h1>
-<!-- ●--------リセットボタン--------● -->
+<!-- ■■■■■■■■■■■■■■■■■■■■■■■■■■■ -->
+<!-- ■    画面構成              ■ -->
+<!-- ■■■■■■■■■■■■■■■■■■■■■■■■■■■ -->
+<h1>Ver：15</h1>
+<!-- ●--------ボタン：リセット--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
 </div>
@@ -60,8 +62,13 @@
   <div class="deckList" id="deckList"></div>
 </div>
 
+<!-- ●--------ボタン：カードを引く--------● -->
+<button id="drawBtn">カードを引く</button>
+
 <script>
-// ▼▼▼▼▼▼▼▼▼ 変数・定数 ▼▼▼▼▼▼▼▼▼
+// ■■■■■■■■■■■■■■■■■■■■■■■■■■■
+// ■    変数・定数            ■
+// ■■■■■■■■■■■■■■■■■■■■■■■■■■■
 // ●--------カードプール--------●
 const CARD_POOL = [
   { id: 'c1', name: '斬撃の剣', text: '敵1体に2ダメージ' },
@@ -77,17 +84,23 @@ const CARD_POOL = [
 // ●--------状態--------●
 let boardCards    = [];   // 公開カード
 let a_deck        = [];   // デッキ
+let pv_hand       = [];   // 手札
 const boardEl      = document.getElementById('board');
 const cardsLeftEl  = document.getElementById('cardsLeft');
 const deckListEl   = document.getElementById('deckList');
 
-// ▼▼▼▼▼▼▼▼▼ 初期表示 ▼▼▼▼▼▼▼▼▼
+// ■■■■■■■■■■■■■■■■■■■■■■■■■■■
+// ■    初期表示              ■
+// ■■■■■■■■■■■■■■■■■■■■■■■■■■■
 dealBoard();  // 場に3枚出す
 renderDeck(); // デッキ描画
 
 // ▼▼▼▼▼▼▼▼▼ ボタン動作 ▼▼▼▼▼▼▼▼▼
-// ●--------リセットボタン--------●
+// ●--------公開カードリセットボタン--------●
 document.getElementById('resetBtn').addEventListener('click', ()=> { dealBoard(); });
+
+// ●--------カード引くボタン--------●
+document.getElementById("drawBtn" ).addEventListener("click", drawCard);
 
 // ▼▼▼▼▼▼▼▼▼ モジュール ▼▼▼▼▼▼▼▼▼ 
 // ●--------場に3枚出す--------●
@@ -103,6 +116,12 @@ function pickCard(idx){
   a_deck.unshift(card);
   renderBoard(); // 場を描画
   renderDeck();  // デッキ描画
+}
+
+// ●--------カードを引く--------●
+function drawCard(){
+  const card = deck.shift(); // 先頭を取り出す
+  pv_hand.push(card);           // 手札に追加
 }
 
 // ●--------場を描画--------●
