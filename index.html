@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：3</h1>
+<h1>Ver：4</h1>
 <div class="info">
   <button id="resetBtn">場をリセット</button>
 </div>
@@ -120,7 +120,6 @@ function renderBoard(){
     msg.textContent = '場にカードがありません（リセットで補充）';
     boardEl.appendChild(msg);
   }
-  cardsLeftEl.textContent = boardCards.length;
 }
 
 // ●デッキ描画
@@ -156,7 +155,7 @@ function tryPickCard(idx){
 
 // ●ユーティリティ：配列をシャッフル
 function shuffle( arr ) {
-  for( let i=arr.length-1; i>0; i-- ) {
+  for( let i = arr.length - 1; i > 0; i-- ) {
     const j = Math.floor( Math.random() * (i+1) );
     [ arr[i], arr[j] ] = [ arr[j], arr[i] ];
   }
