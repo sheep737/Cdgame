@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：11</h1>
+<h1>Ver：12</h1>
 <!-- ●--------リセットボタン--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
@@ -88,26 +88,34 @@ document.getElementById('resetBtn').addEventListener('click', ()=> { dealBoard()
 // ●--------場に3枚出す--------●
 function dealBoard(){
   const pool = shuffle( CARD_POOL.slice() );       // カード一覧をコピーしてシャッフル
-  boardCards = pool.slice(0,3).map(c => ({...c})); // ３枚引く
+  boardCards = pool.slice(0,3).map(c => ({...c})); // 場に３枚並べる
   renderBoard(); // 場を描画
+}
+
+// ●--------カードをピック--------●
+function pickCard(idx){
+  const [card] = boardCards.splice(idx,1); // 場から取り除く
+  a_deck.unshift(card);
+  renderBoard(); // 場を描画
+  renderDeck();  // デッキ描画
 }
 
 // ●--------場を描画--------●
 function renderBoard(){
   boardEl.innerHTML = ''; // 場を初期化
   // 公開カードを描画
-  boardCards.forEach((c, idx) => {
+  boardCards.forEach((c, fv_idx) => {
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
-    cardEl.dataset.idx = idx;
+    cardEl.dataset.idx = fv_idx;
     cardEl.innerHTML = `
       <div class="tag">選ぶ</div>
       <div class="title">${c.name}</div>
       <div class="txt">${c.text}</div>
     `;
     // タップ、クリックで選択
-    cardEl.addEventListener('click',      ()=> pickCard(idx));
-    cardEl.addEventListener('touchstart', ()=> pickCard(idx));
+    cardEl.addEventListener('click',      ()=> pickCard(fv_idx));
+    cardEl.addEventListener('touchstart', ()=> pickCard(fv_idx));
     boardEl.appendChild(cardEl); // 場を描画
   });
 
@@ -134,21 +142,6 @@ function renderDeck(){
     el.textContent = `${i+1}. ${c.name}`;
     deckListEl.appendChild(el);
   });
-}
-
-// ●--------カードをピックしてデッキに加える--------●
-function pickCard(idx){
-  const [card] = boardCards.splice(idx,1); // 場から取り除く
-  a_deck.unshift(card);
-  renderBoard();
-  renderDeck();
-}
-
-// ●--------カードを選べるか試す（選択処理）--------●
-function tryPickCard(idx){
-  const card = boardCards[idx];
-  if(!card) return; // 既に消されている
-  pickCard(idx);
 }
 
 // ●--------配列をシャッフル--------●
