@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：2</h1>
+<h1>Ver：3</h1>
 <div class="info">
   <div>場にあるカード：<span id="cardsLeft">3</span></div>
   <button id="resetBtn">場をリセット</button>
@@ -177,7 +177,6 @@ function dealBoard(){
   const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
   boardCards = pool.slice(0,3).map(c => ({...c}));
   renderBoard();
-  updateInfo();
 }
 
 </script>
