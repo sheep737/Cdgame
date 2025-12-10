@@ -57,6 +57,9 @@
 <div class="deck">
   <h2>あなたのデッキ（上から追加されます）</h2>
   <div class="deckList" id="deckList"></div>
+  <h2>手札</h2>
+  <div id="handList"></div>
+  <button id="drawBtn">3枚ドロー</button>
   <div class="log" id="log"></div>
 </div>
 
@@ -82,6 +85,7 @@ const CARD_POOL = [
 ];
 
 // 状態
+let hand = [];   // ←手札（新規追加）
 let boardCards = [];   // 場にあるカードオブジェクト配列（最大3）
 let deck = [];         // デッキ（配列の先頭が一番上に追加されたカード）
 const boardEl = document.getElementById('board');
@@ -170,6 +174,33 @@ function renderDeck(){
   });
 }
 
+// 3枚ドロー
+function draw3(){
+  for(let i=0;i<3;i++){
+    if(deck.length===0) return;   // デッキ切れ
+    const c = deck.shift();       // デッキから上を取り出す
+    hand.push(c);                 // 手札に追加
+  }
+  renderHand();
+  renderDeck();
+}
+
+// 手札の描画
+function renderHand(){
+  const handList=document.getElementById('handList');
+  handList.innerHTML='';
+  if(hand.length===0){
+    handList.innerHTML='<div style="opacity:.8">手札：0</div>';
+    return;
+  }
+  hand.forEach((c,i)=>{
+    const el=document.createElement('div');
+    el.className='mini';
+    el.textContent = `${c.name}`;
+    handList.appendChild(el);
+  });
+}
+  
 // ログ
 function log(text){
   logEl.textContent = text;
@@ -192,10 +223,14 @@ document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
   renderDeck();
   log('デッキをクリアしました。');
 });
-
+document.getElementById('drawBtn').addEventListener('click',()=>{
+  draw3();
+});
+  
 // 初期表示
 dealBoard();
 renderDeck();
+renderHand();
 
 </script>
 </body>
