@@ -48,7 +48,7 @@
 <!-- ■■■■■■■■■■■■■■■■■■■■■■■■■■■ -->
 <!-- ■    画面構成              ■ -->
 <!-- ■■■■■■■■■■■■■■■■■■■■■■■■■■■ -->
-<h1>Ver：15</h1>
+<h1>Ver：16</h1>
 <!-- ●--------ボタン：リセット--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
@@ -64,6 +64,9 @@
 
 <!-- ●--------ボタン：カードを引く--------● -->
 <button id="drawBtn">カードを引く</button>
+
+<!-- ●--------手札--------● -->
+<div id="handArea"></div>
 
 <script>
 // ■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -83,7 +86,7 @@ const CARD_POOL = [
 
 // ●--------状態--------●
 let boardCards    = [];   // 公開カード
-let a_deck        = [];   // デッキ
+let pv_deck       = [];   // デッキ
 let pv_hand       = [];   // 手札
 const boardEl      = document.getElementById('board');
 const cardsLeftEl  = document.getElementById('cardsLeft');
@@ -113,17 +116,25 @@ function dealBoard(){
 // ●--------カードをピック--------●
 function pickCard(idx){
   const [card] = boardCards.splice(idx,1); // 場から取り除く
-  a_deck.unshift(card);
+  pv_deck.unshift(card);
   renderBoard(); // 場を描画
   renderDeck();  // デッキ描画
 }
 
 // ●--------カードを引く--------●
 function drawCard(){
-  const card = deck.shift(); // 先頭を取り出す
+  const card = pv_deck.shift(); // 先頭を取り出す
   pv_hand.push(card);           // 手札に追加
+  renderDeck();                 // デッキ描画
+  renderHand();                 // 手札を描画
 }
 
+// ●--------手札を描画--------●
+function renderHand(){
+  document.getElementById('handArea').innerHTML =
+    pv_hand.map(c => c.name).join(', ');
+}
+  
 // ●--------場を描画--------●
 function renderBoard(){
   boardEl.innerHTML = ''; // 場を初期化
@@ -157,12 +168,12 @@ function renderBoard(){
 function renderDeck(){
   deckListEl.innerHTML = ''; // デッキリストをクリア
   // デッキリストが０の場合
-  if(a_deck.length===0){
+  if(pv_deck.length===0){
     deckListEl.innerHTML = '<div>デッキ：空</div>';
     return;
   }
   // デッキリストを描画
-  a_deck.forEach( ( c, i ) => {
+  pv_deck.forEach( ( c, i ) => {
     const el = document.createElement('div');
     el.className   = 'mini';
     el.textContent = `${i+1}. ${c.name}`;
