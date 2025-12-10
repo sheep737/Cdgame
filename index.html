@@ -41,22 +41,23 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：4</h1>
+<h1>Ver：6</h1>
+<!-- ●リセットボタン -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
 </div>
 
-<!-- 場 -->
+<!-- ●公開カード -->
 <div class="board" id="board"></div>
 
-<!-- デッキ表示 -->
+<!-- ●デッキ -->
 <div class="deck">
   <div class="deckList" id="deckList"></div>
 </div>
 
 <script>
 // ▼▼▼▼▼▼▼▼▼ 変数・定数 ▼▼▼▼▼▼▼▼▼
-// ●カードプール
+// ●--------カードプール--------●
 const CARD_POOL = [
   { id: 'c1', name: '斬撃の剣', text: '敵1体に2ダメージ' },
   { id: 'c2', name: '回復ハーブ', text: '自分を3回復' },
@@ -68,34 +69,35 @@ const CARD_POOL = [
   { id: 'c8', name: '雷の一撃', text: '敵1体に4ダメージ（確率）' },
 ];
 
-// ●状態
-let boardCards = [];   // 場にあるカードオブジェクト配列（最大3）
+// ●--------状態--------●
+let boardCards    = [];   // 場にあるカードオブジェクト配列（最大3）
 let deck          = [];   // デッキ（配列の先頭が一番上に追加されたカード）
 const boardEl      = document.getElementById('board');
-const cardsLeftEl = document.getElementById('cardsLeft');
+const cardsLeftEl  = document.getElementById('cardsLeft');
 const deckListEl   = document.getElementById('deckList');
 
 // ▼▼▼▼▼▼▼▼▼ 初期表示 ▼▼▼▼▼▼▼▼▼
-dealBoard();
-renderDeck();
+dealBoard();  // 場に3枚出す
+renderDeck(); // デッキ描画
 
 // ▼▼▼▼▼▼▼▼▼ ボタン動作 ▼▼▼▼▼▼▼▼▼
-// ●リセットボタン
+// ●--------リセットボタン--------●
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   dealBoard();
 });
 
 // ▼▼▼▼▼▼▼▼▼ モジュール ▼▼▼▼▼▼▼▼▼ 
-// ●初期化：場に3枚出す
+// ●--------場に3枚出す--------●
 function dealBoard(){
-  const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
-  boardCards = pool.slice(0,3).map(c => ({...c}));
-  renderBoard();
+  const pool = shuffle( CARD_POOL.slice() );       // カード一覧をコピーしてシャッフル
+  boardCards = pool.slice(0,3).map(c => ({...c})); // ３枚引く
+  renderBoard(); // 場を描画
 }
 
-// ●ボード描画
+// ●--------場を描画--------●
 function renderBoard(){
-  boardEl.innerHTML = '';
+  boardEl.innerHTML = ''; // 場を初期化
+  // 公開カードを描画
   boardCards.forEach((c, idx) => {
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
@@ -105,11 +107,10 @@ function renderBoard(){
       <div class="title">${c.name}</div>
       <div class="txt">${c.text}</div>
     `;
-    // タップ / クリックで選択（選べるのは有効なカードのみ）
+    // タップ、クリックで選択
     cardEl.addEventListener('click', ()=> tryPickCard(idx));
-    // タッチでも反応
     cardEl.addEventListener('touchstart', ()=> tryPickCard(idx));
-    boardEl.appendChild(cardEl);
+    boardEl.appendChild(cardEl); // 場を描画
   });
 
   // 場が空ならメッセージ
@@ -122,7 +123,7 @@ function renderBoard(){
   }
 }
 
-// ●デッキ描画
+// ●--------デッキ描画--------●
 function renderDeck(){
   deckListEl.innerHTML = '';
   if(deck.length===0){
@@ -137,7 +138,7 @@ function renderDeck(){
   });
 }
 
-// ●カードをピックしてデッキに加える
+// ●--------カードをピックしてデッキに加える--------●
 function pickCard(idx){
   const [card] = boardCards.splice(idx,1); // 場から取り除く
   // デッキの先頭に追加（上に積むイメージ）
@@ -146,14 +147,14 @@ function pickCard(idx){
   renderDeck();
 }
 
-// ●カードを選べるか試す（選択処理）
+// ●--------カードを選べるか試す（選択処理）--------●
 function tryPickCard(idx){
   const card = boardCards[idx];
   if(!card) return; // 既に消されている
   pickCard(idx);
 }
 
-// ●ユーティリティ：配列をシャッフル
+// ●--------配列をシャッフル--------●
 function shuffle( arr ) {
   for( let i = arr.length - 1; i > 0; i-- ) {
     const j = Math.floor( Math.random() * (i+1) );
