@@ -71,7 +71,7 @@ const CARD_POOL = [
 
 // ●--------状態--------●
 let boardCards    = [];   // 公開カード
-let deck          = [];   // デッキ
+let a_deck          = [];   // デッキ
 const boardEl      = document.getElementById('board');
 const cardsLeftEl  = document.getElementById('cardsLeft');
 const deckListEl   = document.getElementById('deckList');
@@ -123,12 +123,12 @@ function renderBoard(){
 
 // ●--------デッキ描画--------●
 function renderDeck(){
-  deckListEl.innerHTML = '';
-  if(deck.length===0){
+  deckListEl.innerHTML = ''; // デッキをクリア
+  if(a_deck.length===0){
     deckListEl.innerHTML = '<div style="opacity:.8">デッキ：空</div>';
     return;
   }
-  deck.forEach((c,i)=>{
+  a_deck.forEach((c,i)=>{
     const el = document.createElement('div');
     el.className = 'mini';
     el.textContent = `${i+1}. ${c.name}`;
@@ -139,7 +139,7 @@ function renderDeck(){
 // ●--------カードをピックしてデッキに加える--------●
 function pickCard(idx){
   const [card] = boardCards.splice(idx,1); // 場から取り除く
-  deck.unshift(card);
+  a_deck.unshift(card);
   renderBoard();
   renderDeck();
 }
