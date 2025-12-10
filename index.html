@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：10</h1>
+<h1>Ver：11</h1>
 <!-- ●--------リセットボタン--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
@@ -106,8 +106,8 @@ function renderBoard(){
       <div class="txt">${c.text}</div>
     `;
     // タップ、クリックで選択
-    cardEl.addEventListener('click',      ()=> PickCard(idx));
-    cardEl.addEventListener('touchstart', ()=> PickCard(idx));
+    cardEl.addEventListener('click',      ()=> pickCard(idx));
+    cardEl.addEventListener('touchstart', ()=> pickCard(idx));
     boardEl.appendChild(cardEl); // 場を描画
   });
 
