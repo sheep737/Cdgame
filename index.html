@@ -40,7 +40,8 @@
 </head>
 
 <body>
-<h1>Ver：1</h1>
+<!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
+<h1>Ver：2</h1>
 <div class="info">
   <div>場にあるカード：<span id="cardsLeft">3</span></div>
   <button id="resetBtn">場をリセット</button>
@@ -58,8 +59,7 @@
 </div>
 
 <script>
-
-// ------ 変数・定数 ------
+// ▼▼▼▼▼▼▼▼▼ 変数・定数 ▼▼▼▼▼▼▼▼▼
 // ●カードプール
 const CARD_POOL = [
   { id: 'c1', name: '斬撃の剣', text: '敵1体に2ダメージ' },
@@ -79,11 +79,11 @@ const boardEl = document.getElementById('board');
 const cardsLeftEl = document.getElementById('cardsLeft');
 const deckListEl = document.getElementById('deckList');
 
-// ------ 初期表示 ------
+// ▼▼▼▼▼▼▼▼▼ 初期表示 ▼▼▼▼▼▼▼▼▼
 dealBoard();
 renderDeck();
 
-// ------ ボタン動作 ------
+// ▼▼▼▼▼▼▼▼▼ ボタン動作 ▼▼▼▼▼▼▼▼▼
 // ●リセットボタン
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   dealBoard();
@@ -100,7 +100,7 @@ document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
   renderDeck();
 });
 
-// ------ モジュール ------ 
+// ▼▼▼▼▼▼▼▼▼ モジュール ▼▼▼▼▼▼▼▼▼ 
 // ●ボード描画
 function renderBoard(){
   boardEl.innerHTML = '';
