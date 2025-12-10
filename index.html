@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：8</h1>
+<h1>Ver：9</h1>
 <!-- ●--------リセットボタン--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
@@ -71,7 +71,7 @@ const CARD_POOL = [
 
 // ●--------状態--------●
 let boardCards    = [];   // 公開カード
-let a_deck          = [];   // デッキ
+let a_deck        = [];   // デッキ
 const boardEl      = document.getElementById('board');
 const cardsLeftEl  = document.getElementById('cardsLeft');
 const deckListEl   = document.getElementById('deckList');
@@ -125,7 +125,7 @@ function renderBoard(){
 function renderDeck(){
   deckListEl.innerHTML = ''; // デッキをクリア
   if(a_deck.length===0){
-    deckListEl.innerHTML = '<div style="opacity:.8">デッキ：空</div>';
+    deckListEl.innerHTML = '<div>デッキ：空</div>';
     return;
   }
   a_deck.forEach((c,i)=>{
