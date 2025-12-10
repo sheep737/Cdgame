@@ -33,6 +33,7 @@
   .deck h2{margin:0 0 8px;font-size:15px;color:#fff}
   .deckList{display:flex;flex-wrap:wrap;gap:8px}
   .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)}
+  /* スマホ対応 */
   @media(min-width:700px){
     .card{width:160px;height:220px}
   }
@@ -132,10 +133,12 @@ function renderBoard(){
 // ●--------デッキ描画--------●
 function renderDeck(){
   deckListEl.innerHTML = ''; // デッキリストをクリア
+  // デッキリストが０の場合
   if(a_deck.length===0){
     deckListEl.innerHTML = '<div>デッキ：空</div>';
     return;
   }
+  // デッキリストを描画
   a_deck.forEach( ( c, i ) => {
     const el = document.createElement('div');
     el.className   = 'mini';
