@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：9</h1>
+<h1>Ver：10</h1>
 <!-- ●--------リセットボタン--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
@@ -106,8 +106,8 @@ function renderBoard(){
       <div class="txt">${c.text}</div>
     `;
     // タップ、クリックで選択
-    cardEl.addEventListener('click',      ()=> tryPickCard(idx));
-    cardEl.addEventListener('touchstart', ()=> tryPickCard(idx));
+    cardEl.addEventListener('click',      ()=> PickCard(idx));
+    cardEl.addEventListener('touchstart', ()=> PickCard(idx));
     boardEl.appendChild(cardEl); // 場を描画
   });
 
@@ -123,14 +123,14 @@ function renderBoard(){
 
 // ●--------デッキ描画--------●
 function renderDeck(){
-  deckListEl.innerHTML = ''; // デッキをクリア
+  deckListEl.innerHTML = ''; // デッキリストをクリア
   if(a_deck.length===0){
     deckListEl.innerHTML = '<div>デッキ：空</div>';
     return;
   }
-  a_deck.forEach((c,i)=>{
+  a_deck.forEach( ( c, i ) => {
     const el = document.createElement('div');
-    el.className = 'mini';
+    el.className   = 'mini';
     el.textContent = `${i+1}. ${c.name}`;
     deckListEl.appendChild(el);
   });
