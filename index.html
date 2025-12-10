@@ -41,7 +41,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：7</h1>
+<h1>Ver：8</h1>
 <!-- ●--------リセットボタン--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
@@ -70,8 +70,8 @@ const CARD_POOL = [
 ];
 
 // ●--------状態--------●
-let boardCards    = [];   // 場にあるカードオブジェクト配列（最大3）
-let deck          = [];   // デッキ（配列の先頭が一番上に追加されたカード）
+let boardCards    = [];   // 公開カード
+let deck          = [];   // デッキ
 const boardEl      = document.getElementById('board');
 const cardsLeftEl  = document.getElementById('cardsLeft');
 const deckListEl   = document.getElementById('deckList');
@@ -82,9 +82,7 @@ renderDeck(); // デッキ描画
 
 // ▼▼▼▼▼▼▼▼▼ ボタン動作 ▼▼▼▼▼▼▼▼▼
 // ●--------リセットボタン--------●
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  dealBoard();
-});
+document.getElementById('resetBtn').addEventListener('click', ()=> { dealBoard(); });
 
 // ▼▼▼▼▼▼▼▼▼ モジュール ▼▼▼▼▼▼▼▼▼ 
 // ●--------場に3枚出す--------●
@@ -108,7 +106,7 @@ function renderBoard(){
       <div class="txt">${c.text}</div>
     `;
     // タップ、クリックで選択
-    cardEl.addEventListener('click', ()=> tryPickCard(idx));
+    cardEl.addEventListener('click',      ()=> tryPickCard(idx));
     cardEl.addEventListener('touchstart', ()=> tryPickCard(idx));
     boardEl.appendChild(cardEl); // 場を描画
   });
