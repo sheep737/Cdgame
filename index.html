@@ -33,7 +33,6 @@
   .deck h2{margin:0 0 8px;font-size:15px;color:#fff}
   .deckList{display:flex;flex-wrap:wrap;gap:8px}
   .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)}
-  .log{font-size:13px;opacity:.85;margin-top:8px}
   @media(min-width:700px){
     .card{width:160px;height:220px}
   }
@@ -41,7 +40,7 @@
 </head>
 
 <body>
-<h1>場のカードから1枚選んでデッキに加える</h1>
+<h1>Ver：1</h1>
 <div class="info">
   <div>場にあるカード：<span id="cardsLeft">3</span></div>
   <button id="resetBtn">場をリセット</button>
@@ -56,7 +55,6 @@
 <div class="deck">
   <h2>あなたのデッキ（上から追加されます）</h2>
   <div class="deckList" id="deckList"></div>
-  <div class="log" id="log"></div>
 </div>
 
 <script>
@@ -86,7 +84,6 @@ let deck = [];         // デッキ（配列の先頭が一番上に追加され
 const boardEl = document.getElementById('board');
 const cardsLeftEl = document.getElementById('cardsLeft');
 const deckListEl = document.getElementById('deckList');
-const logEl = document.getElementById('log');
 
 // ユーティリティ：配列をシャッフル
 function shuffle(arr){
@@ -149,7 +146,6 @@ function pickCard(idx){
   const [card] = boardCards.splice(idx,1); // 場から取り除く
   // デッキの先頭に追加（上に積むイメージ）
   deck.unshift(card);
-  log(`"${card.name}" をデッキに追加しました。`);
   renderBoard();
   renderDeck();
 }
@@ -169,13 +165,6 @@ function renderDeck(){
   });
 }
 
-// ログ
-function log(text){
-  logEl.textContent = text;
-  // 短時間で消す（オプション）
-  setTimeout(()=>{ if(logEl.textContent===text) logEl.textContent=''; }, 3000);
-}
-
 // UI ボタン
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   dealBoard();
@@ -183,13 +172,11 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
 document.getElementById('shuffleDeckBtn').addEventListener('click', ()=>{
   deck = shuffle(deck);
   renderDeck();
-  log('デッキをシャッフルしました。');
 });
 document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
   if(!confirm('デッキを空にしますか？')) return;
   deck = [];
   renderDeck();
-  log('デッキをクリアしました。');
 });
 
 // 初期表示
