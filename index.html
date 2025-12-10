@@ -8,6 +8,8 @@
   :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
   body{margin:0;background:#0b1220;color:#eef;padding:20px;box-sizing:border-box}
   h1{font-size:18px;margin:0 0 12px}
+  
+  /* ●--------公開カード--------● */
   .board{
     display:flex;gap:12px;justify-content:center;margin-bottom:18px;
     flex-wrap:wrap;
@@ -20,20 +22,22 @@
     user-select:none; touch-action: manipulation; cursor:pointer; position:relative;
     transition: transform .14s, box-shadow .14s, opacity .14s;
   }
-  .card.disabled{opacity:.45; cursor:default; transform: translateY(6px) scale(.98);}
-  .card .title{font-weight:700;font-size:14px;margin-bottom:6px}
-  .card .txt{font-size:12px; text-align:center; padding:0 6px}
-  .card .tag{position:absolute; top:8px; right:8px; background:#222;color:#fff;font-size:11px;padding:4px 6px;border-radius:6px;}
-  .info{display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
-  button{font-size:14px;padding:8px 12px;border-radius:8px;border:0;background:#2a8; color:#052; font-weight:700; cursor:pointer}
-  button:disabled{opacity:.5; cursor:default}
+  .card .title{font-weight:700;font-size:14px;margin-bottom:6px}                                                                    /* 公開カードタイトル   */
+  .card .txt{font-size:12px; text-align:center; padding:0 6px}                                                                      /* 公開カードテキスト   */
+  .card .tag{position:absolute; top:8px; right:8px; background:#222;color:#fff;font-size:11px;padding:4px 6px;border-radius:6px;}   /* 公開カードタグ：選ぶ */
+
+  /* ●--------ボタン--------● */
+  .info{display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:12px;flex-wrap:wrap}  /* ボタンの大枠 */
+  button{font-size:14px;padding:8px 12px;border-radius:8px;border:0;background:#2a8; color:#052; font-weight:700; cursor:pointer}  /* ボタン */
+
+  /* ●--------デッキ--------● */
   .deck{
-    max-width:720px;margin:0 auto;background:rgba(255,255,255,0.04);padding:12px;border-radius:8px;
+    max-width:720px;margin:0 auto;background:rgba(255,255,255,0.04);padding:12px;border-radius:8px; /* デッキ大枠 */
   }
-  .deck h2{margin:0 0 8px;font-size:15px;color:#fff}
-  .deckList{display:flex;flex-wrap:wrap;gap:8px}
-  .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)}
-  /* スマホ対応 */
+  .deckList{display:flex;flex-wrap:wrap;gap:8px}  /* デッキリスト枠 */
+  .mini{background:#fff;color:#111;padding:6px 8px;border-radius:6px;font-size:13px;box-shadow:0 4px 8px rgba(0,0,0,.4)}　/* デッキカード */
+  
+  /* ●--------スマホ対応--------● */
   @media(min-width:700px){
     .card{width:160px;height:220px}
   }
@@ -42,7 +46,7 @@
 
 <body>
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
-<h1>Ver：13</h1>
+<h1>Ver：14</h1>
 <!-- ●--------リセットボタン--------● -->
 <div class="info">
   <button id="resetBtn">場をリセット</button>
