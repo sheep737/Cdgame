@@ -43,10 +43,7 @@
 <!-- ▼▼▼▼▼▼▼▼▼ 画面構成 ▼▼▼▼▼▼▼▼▼ -->
 <h1>Ver：3</h1>
 <div class="info">
-  <div>場にあるカード：<span id="cardsLeft">3</span></div>
   <button id="resetBtn">場をリセット</button>
-  <button id="shuffleDeckBtn">デッキをシャッフル</button>
-  <button id="clearDeckBtn">デッキをクリア</button>
 </div>
 
 <!-- 場 -->
@@ -54,7 +51,6 @@
 
 <!-- デッキ表示 -->
 <div class="deck">
-  <h2>あなたのデッキ（上から追加されます）</h2>
   <div class="deckList" id="deckList"></div>
 </div>
 
@@ -74,10 +70,10 @@ const CARD_POOL = [
 
 // ●状態
 let boardCards = [];   // 場にあるカードオブジェクト配列（最大3）
-let deck = [];         // デッキ（配列の先頭が一番上に追加されたカード）
-const boardEl = document.getElementById('board');
+let deck          = [];   // デッキ（配列の先頭が一番上に追加されたカード）
+const boardEl      = document.getElementById('board');
 const cardsLeftEl = document.getElementById('cardsLeft');
-const deckListEl = document.getElementById('deckList');
+const deckListEl   = document.getElementById('deckList');
 
 // ▼▼▼▼▼▼▼▼▼ 初期表示 ▼▼▼▼▼▼▼▼▼
 dealBoard();
@@ -88,19 +84,15 @@ renderDeck();
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   dealBoard();
 });
-// ●シャッフルボタン
-document.getElementById('shuffleDeckBtn').addEventListener('click', ()=>{
-  deck = shuffle(deck);
-  renderDeck();
-});
-// ●クリアボタン
-document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
-  if(!confirm('デッキを空にしますか？')) return;
-  deck = [];
-  renderDeck();
-});
 
 // ▼▼▼▼▼▼▼▼▼ モジュール ▼▼▼▼▼▼▼▼▼ 
+// ●初期化：場に3枚出す
+function dealBoard(){
+  const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
+  boardCards = pool.slice(0,3).map(c => ({...c}));
+  renderBoard();
+}
+
 // ●ボード描画
 function renderBoard(){
   boardEl.innerHTML = '';
@@ -163,21 +155,15 @@ function tryPickCard(idx){
 }
 
 // ●ユーティリティ：配列をシャッフル
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
+function shuffle( arr ) {
+  for( let i=arr.length-1; i>0; i-- ) {
+    const j = Math.floor( Math.random() * (i+1) );
+    [ arr[i], arr[j] ] = [ arr[j], arr[i] ];
   }
   return arr;
 }
 
-// ●初期化：場に3枚出す
-function dealBoard(){
-  // pick 3 random distinct from CARD_POOL
-  const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
-  boardCards = pool.slice(0,3).map(c => ({...c}));
-  renderBoard();
-}
+
 
 </script>
 </body>
