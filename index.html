@@ -58,15 +58,9 @@
 </div>
 
 <script>
-/*
-  使い方：
-  - 場に表示される3枚のカードから1枚タップ（クリック）すると、
-    そのカードがデッキ（右下）に追加され、場からは消えます。
-  - 「場をリセット」で別の3枚が出ます（デッキはそのまま）。
-  - 「デッキをシャッフル／クリア」などのボタンあり。
-*/
 
-// 例として使うカードプール（好きに変えてOK）
+// ------ 変数・定数 ------
+// ●カードプール
 const CARD_POOL = [
   { id: 'c1', name: '斬撃の剣', text: '敵1体に2ダメージ' },
   { id: 'c2', name: '回復ハーブ', text: '自分を3回復' },
@@ -78,32 +72,36 @@ const CARD_POOL = [
   { id: 'c8', name: '雷の一撃', text: '敵1体に4ダメージ（確率）' },
 ];
 
-// 状態
+// ●状態
 let boardCards = [];   // 場にあるカードオブジェクト配列（最大3）
 let deck = [];         // デッキ（配列の先頭が一番上に追加されたカード）
 const boardEl = document.getElementById('board');
 const cardsLeftEl = document.getElementById('cardsLeft');
 const deckListEl = document.getElementById('deckList');
 
-// ユーティリティ：配列をシャッフル
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-  return arr;
-}
+// ------ 初期表示 ------
+dealBoard();
+renderDeck();
 
-// 初期化：場に3枚出す
-function dealBoard(){
-  // pick 3 random distinct from CARD_POOL
-  const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
-  boardCards = pool.slice(0,3).map(c => ({...c}));
-  renderBoard();
-  updateInfo();
-}
+// ------ ボタン動作 ------
+// ●リセットボタン
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  dealBoard();
+});
+// ●シャッフルボタン
+document.getElementById('shuffleDeckBtn').addEventListener('click', ()=>{
+  deck = shuffle(deck);
+  renderDeck();
+});
+// ●クリアボタン
+document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
+  if(!confirm('デッキを空にしますか？')) return;
+  deck = [];
+  renderDeck();
+});
 
-// ボード描画
+// ------ モジュール ------ 
+// ●ボード描画
 function renderBoard(){
   boardEl.innerHTML = '';
   boardCards.forEach((c, idx) => {
@@ -133,24 +131,7 @@ function renderBoard(){
   cardsLeftEl.textContent = boardCards.length;
 }
 
-// カードを選べるか試す（選択処理）
-function tryPickCard(idx){
-  const card = boardCards[idx];
-  if(!card) return; // 既に消されている
-  // ここに制限を追加可能（例：コスト支払い、ターン制など）
-  pickCard(idx);
-}
-
-// カードをピックしてデッキに加える
-function pickCard(idx){
-  const [card] = boardCards.splice(idx,1); // 場から取り除く
-  // デッキの先頭に追加（上に積むイメージ）
-  deck.unshift(card);
-  renderBoard();
-  renderDeck();
-}
-
-// デッキ描画
+// ●デッキ描画
 function renderDeck(){
   deckListEl.innerHTML = '';
   if(deck.length===0){
@@ -165,23 +146,39 @@ function renderDeck(){
   });
 }
 
-// UI ボタン
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  dealBoard();
-});
-document.getElementById('shuffleDeckBtn').addEventListener('click', ()=>{
-  deck = shuffle(deck);
+// ●カードをピックしてデッキに加える
+function pickCard(idx){
+  const [card] = boardCards.splice(idx,1); // 場から取り除く
+  // デッキの先頭に追加（上に積むイメージ）
+  deck.unshift(card);
+  renderBoard();
   renderDeck();
-});
-document.getElementById('clearDeckBtn').addEventListener('click', ()=>{
-  if(!confirm('デッキを空にしますか？')) return;
-  deck = [];
-  renderDeck();
-});
+}
 
-// 初期表示
-dealBoard();
-renderDeck();
+// ●カードを選べるか試す（選択処理）
+function tryPickCard(idx){
+  const card = boardCards[idx];
+  if(!card) return; // 既に消されている
+  pickCard(idx);
+}
+
+// ●ユーティリティ：配列をシャッフル
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// ●初期化：場に3枚出す
+function dealBoard(){
+  // pick 3 random distinct from CARD_POOL
+  const pool = shuffle(CARD_POOL.slice()); // コピーしてシャッフル
+  boardCards = pool.slice(0,3).map(c => ({...c}));
+  renderBoard();
+  updateInfo();
+}
 
 </script>
 </body>
