@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>スマホ横スクロール</title>
 <style>
-  const playerImg = new Image();
-  playerImg.src = "player.png";
-  
+ 
   body {
     margin: 0;
     background: #222;
@@ -25,6 +23,9 @@
 <canvas id="game"></canvas>
 
 <script>
+const playerImg = new Image();
+playerImg.src = "player.png";
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
