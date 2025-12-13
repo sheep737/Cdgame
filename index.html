@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:1</title>
+<title>スマホ横スクロール ver:2</title>
 <style>
  
   body {
@@ -49,7 +49,8 @@ const player = {
   h: 40,
   dy: 0,
   jump: -14,
-  ground: false
+  ground: false,
+  jumpCount: 0
 };
 
 let groundY;
@@ -59,8 +60,12 @@ let obstacles = [];
 document.addEventListener("touchstart", () => {
   if (isGameOver) {
     location.reload();
-  } else if (player.ground) {
+    return;
+  }
+  
+  if (player.jumpCount < 2) {
     player.dy = player.jump;
+    player.jumpCount++;
     player.ground = false;
   }
 });
@@ -88,6 +93,7 @@ function update() {
     player.y = groundY - player.h;
     player.dy = 0;
     player.ground = true;
+    player.jumpCount = 0;
   }
 
   // 障害物
