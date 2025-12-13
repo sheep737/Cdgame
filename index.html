@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>スマホ横スクロール</title>
 <style>
+  const playerImg = new Image();
+  playerImg.src = "player.png";
+  
   body {
     margin: 0;
     background: #222;
@@ -113,9 +116,14 @@ function draw() {
   ctx.fillStyle = "green";
   ctx.fillRect(0, groundY, canvas.width, 80);
 
-  // プレイヤー
-  ctx.fillStyle = "red";
-  ctx.fillRect(player.x, player.y, player.w, player.h);
+  // プレイヤー// プレイヤー（画像）
+  ctx.drawImage(
+    playerImg,
+    player.x,
+    player.y,
+    player.w,
+    player.h
+  );
 
   // 障害物
   ctx.fillStyle = "black";
