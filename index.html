@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:2</title>
+<title>スマホ横スクロール ver:3</title>
 <style>
  
   body {
@@ -51,6 +51,13 @@ const player = {
   jump: -14,
   ground: false,
   jumpCount: 0
+};
+
+playerImg.onload = () => {
+  const scale = 0.15; // ← 好きな大きさに調整
+  player.w = playerImg.width * scale;
+  player.h = playerImg.height * scale;
+  loop();
 };
 
 let groundY;
@@ -151,7 +158,6 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-loop();
 </script>
 </body>
 </html>
