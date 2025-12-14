@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:6</title>
+<title>スマホ横スクロール ver:7</title>
 <style>
  
   body {
@@ -93,7 +93,7 @@ function update() {
   if (isGameOver) return;
 
   score += 0.2;
-  score = Math.floor(score);
+  score = Math.floor(scoreReal);
  
   groundY = canvas.height - 80;
 
