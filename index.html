@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:5</title>
+<title>スマホ横スクロール ver:6</title>
 <style>
  
   body {
@@ -40,6 +40,7 @@ window.addEventListener("resize", resize);
 let gravity = 0.8;
 let speed = 6;
 let isGameOver = false;
+let score = 0;
 
 // プレイヤー
 const player = {
@@ -70,7 +71,7 @@ document.addEventListener("touchstart", () => {
     return;
   }
   
-  if (player.jumpCount < 2) {
+  if (player.jumpCount < 3) {
     player.dy = player.jump;
     player.jumpCount++;
     player.ground = false;
@@ -90,6 +91,9 @@ function createObstacle() {
 function update() {
   if (isGameOver) return;
 
+  score += 0.2;
+  score = Math.floor(score);
+ 
   groundY = canvas.height - 80;
 
   // プレイヤー
@@ -126,6 +130,11 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // スコア表示
+  ctx.fillStyle = "black";
+  ctx.font = "bold 24px sans-serif";
+  ctx.fillText("SCORE : " + score, 20, 40);
+ 
   // 地面
   ctx.fillStyle = "green";
   ctx.fillRect(0, groundY, canvas.width, 80);
@@ -143,13 +152,29 @@ function draw() {
   ctx.fillStyle = "black";
   obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
 
-  if (isGameOver) {
-    ctx.fillStyle = "black";
-    ctx.font = "bold 36px sans-serif";
-    ctx.fillText("GAME OVER", canvas.width / 2 - 110, canvas.height / 2);
-    ctx.font = "18px sans-serif";
-    ctx.fillText("タップでリスタート", canvas.width / 2 - 90, canvas.height / 2 + 40);
-  }
+if (isGameOver) {
+  ctx.fillStyle = "black";
+  ctx.font = "bold 36px sans-serif";
+  ctx.fillText(
+    "GAME OVER",
+    canvas.width / 2 - 110,
+    canvas.height / 2 - 20
+  );
+
+  ctx.font = "20px sans-serif";
+  ctx.fillText(
+    "SCORE : " + score,
+    canvas.width / 2 - 60,
+    canvas.height / 2 + 20
+  );
+
+  ctx.font = "18px sans-serif";
+  ctx.fillText(
+    "タップでリスタート",
+    canvas.width / 2 - 90,
+    canvas.height / 2 + 60
+  );
+}
 }
 
 function loop() {
