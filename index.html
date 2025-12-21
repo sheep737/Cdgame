@@ -42,6 +42,7 @@ let speed = 6;
 let isGameOver = false;
 let score = 0;
 let scoreReal = 0;
+let highScore = localStorage.getItem("highScore") || 0;
 
 // プレイヤー
 const player = {
@@ -94,7 +95,13 @@ function update() {
 
   scoreReal += 0.2;
   score = Math.floor(scoreReal);
- 
+
+  // ★ ハイスコア更新
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+  }
+
   groundY = canvas.height - 80;
 
   // プレイヤー
@@ -136,6 +143,17 @@ function draw() {
   ctx.font = "bold 24px sans-serif";
   ctx.fillText("SCORE : " + score, 20, 40);
  
+  ctx.fillStyle = "black";
+  ctx.font = "bold 20px sans-serif";
+  ctx.fillText("HI : " + highScore, 20, 70);
+  
+  ctx.font = "20px sans-serif";
+  ctx.fillText(
+    "HI-SCORE : " + highScore,
+    canvas.width / 2 - 90,
+    canvas.height / 2 + 50
+  );
+
   // 地面
   ctx.fillStyle = "green";
   ctx.fillRect(0, groundY, canvas.width, 80);
