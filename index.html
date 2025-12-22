@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:10</title>
+<title>スマホ横スクロール ver:11</title>
 <style>
  
   body {
@@ -42,7 +42,8 @@ let speed = 6;
 let isGameOver = false;
 let score = 0;
 let scoreReal = 0;
-let highScore = localStorage.getItem("highScore") || 0;
+let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+highScores = highScores.map(Number);
 
 // プレイヤー
 const player = {
@@ -96,12 +97,6 @@ function update() {
   scoreReal += 0.2;
   score = Math.floor(scoreReal);
 
-  // ★ ハイスコア更新
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem("highScore", highScore);
-  }
-
   groundY = canvas.height - 80;
 
   // プレイヤー
@@ -119,20 +114,24 @@ function update() {
   obstacles.forEach(o => o.x -= speed);
   obstacles = obstacles.filter(o => o.x + o.w > 0);
 
-  // 衝突
-  obstacles.forEach(o => {
-    if (
-      player.x < o.x + o.w &&
-      player.x + player.w > o.x &&
-      player.y < o.y + o.h &&
-      player.y + player.h > o.y
-    ) {
-      isGameOver = true;
-    }
-  });
+// 衝突
+obstacles.forEach(o => {
+  if (
+    player.x < o.x + o.w &&
+    player.x + player.w > o.x &&
+    player.y < o.y + o.h &&
+    player.y + player.h > o.y
+  ) {
+if (!isGameOver) {
+  isGameOver = true;
+  saveHighScore(score);
+}
+  }
+});
 
   // ランダム生成
   if (Math.random() < 0.025) createObstacle();
+
 }
 
 function draw() {
@@ -145,7 +144,6 @@ function draw() {
  
   ctx.fillStyle = "black";
   ctx.font = "bold 20px sans-serif";
-  ctx.fillText("HI : " + highScore, 20, 70);
   
   // 地面
   ctx.fillStyle = "green";
@@ -163,7 +161,10 @@ function draw() {
   // 障害物
   ctx.fillStyle = "black";
   obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
-
+ 
+ctx.font = "bold 20px sans-serif";
+ctx.fillText("HI : " + (highScores[0] || 0), 20, 70);
+ 
 if (isGameOver) {
   ctx.fillStyle = "black";
   ctx.font = "bold 36px sans-serif";
@@ -189,13 +190,41 @@ if (isGameOver) {
 
   ctx.font = "20px sans-serif";
   ctx.fillText(
-    "HI-SCORE : " + highScore,
+    "HI-SCORE : " + (highScores[0] || 0) ,
     canvas.width / 2 - 90,
     canvas.height / 2 + 50
   );
+
+ctx.font = "20px sans-serif";
+ctx.fillText(
+  "TOP SCORES",
+  canvas.width / 2 - 60,
+  canvas.height / 2 + 60
+);
+
+highScores.forEach((s, i) => {
+  ctx.fillText(
+    `${i + 1}. ${s}`,
+    canvas.width / 2 - 40,
+    canvas.height / 2 + 90 + i * 25
+  );
+});
+ 
 }
 }
 
+function saveHighScore(newScore) {
+  highScores.push(newScore);
+
+  // 高い順に並び替え
+  highScores.sort((a, b) => b - a);
+
+  // 上位3つだけ残す
+  highScores = highScores.slice(0, 3);
+
+  localStorage.setItem("highScores", JSON.stringify(highScores));
+}
+ 
 function loop() {
   update();
   draw();
