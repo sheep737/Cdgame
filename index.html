@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:8</title>
+<title>スマホ横スクロール ver:9</title>
 <style>
  
   body {
@@ -147,13 +147,6 @@ function draw() {
   ctx.font = "bold 20px sans-serif";
   ctx.fillText("HI : " + highScore, 20, 70);
   
-  ctx.font = "20px sans-serif";
-  ctx.fillText(
-    "HI-SCORE : " + highScore,
-    canvas.width / 2 - 90,
-    canvas.height / 2 + 50
-  );
-
   // 地面
   ctx.fillStyle = "green";
   ctx.fillRect(0, groundY, canvas.width, 80);
@@ -192,6 +185,13 @@ if (isGameOver) {
     "タップでリスタート",
     canvas.width / 2 - 90,
     canvas.height / 2 + 60
+  );
+
+  ctx.font = "20px sans-serif";
+  ctx.fillText(
+    "HI-SCORE : " + highScore,
+    canvas.width / 2 - 90,
+    canvas.height / 2 + 50
   );
 }
 }
