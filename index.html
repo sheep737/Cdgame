@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:18</title>
+<title>スマホ横スクロール ver:19</title>
 <style>
- 
   body {
     margin: 0;
     background: #222;
@@ -23,35 +22,52 @@
 <canvas id="game"></canvas>
 
 <script>
-const playerImg = new Image();
-playerImg.src = "player.png";
-
+/* =====================
+   Canvas & DPR 対応
+===================== */
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = "high";
+
 function resize() {
   const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
 
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
 
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resize();
 window.addEventListener("resize", resize);
 
+/* =====================
+   画像読み込み
+===================== */
+const playerImg = new Image();
+playerImg.src = "player.png";
+
+/* =====================
+   ゲーム変数
+===================== */
 let gravity = 0.8;
 let speed = 6;
 let isGameOver = false;
 let score = 0;
 let scoreReal = 0;
+
 let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
 highScores = highScores.map(Number);
 
-// プレイヤー
+/* =====================
+   プレイヤー
+===================== */
 const player = {
   x: 50,
   y: 0,
@@ -59,51 +75,59 @@ const player = {
   h: 40,
   dy: 0,
   jump: -14,
-  ground: false,
   jumpCount: 0
 };
 
 playerImg.onload = () => {
-  const scale = 0.03; // ← 好きな大きさに調整
+  const scale = 0.03;
   player.w = playerImg.width * scale;
   player.h = playerImg.height * scale;
   loop();
 };
 
+/* =====================
+   ステージ
+===================== */
 let groundY;
 let obstacles = [];
 
-// タップ操作
+/* =====================
+   操作
+===================== */
 document.addEventListener("touchstart", () => {
   if (isGameOver) {
     location.reload();
     return;
   }
-  
+
   if (player.jumpCount < 3) {
     player.dy = player.jump;
     player.jumpCount++;
-    player.ground = false;
   }
 });
 
-// 障害物生成
+/* =====================
+   障害物
+===================== */
 function createObstacle() {
   obstacles.push({
-    x: canvas.width,
+    x: window.innerWidth,
     y: groundY - 30,
     w: 30,
     h: 30
   });
 }
 
+/* =====================
+   更新
+===================== */
 function update() {
   if (isGameOver) return;
 
   scoreReal += 0.2;
   score = Math.floor(scoreReal);
 
-  groundY = canvas.height - 80;
+  groundY = window.innerHeight - 80;
 
   // プレイヤー
   player.dy += gravity;
@@ -112,7 +136,6 @@ function update() {
   if (player.y + player.h >= groundY) {
     player.y = groundY - player.h;
     player.dy = 0;
-    player.ground = true;
     player.jumpCount = 0;
   }
 
@@ -120,116 +143,91 @@ function update() {
   obstacles.forEach(o => o.x -= speed);
   obstacles = obstacles.filter(o => o.x + o.w > 0);
 
-// 衝突
-obstacles.forEach(o => {
-  if (
-    player.x < o.x + o.w &&
-    player.x + player.w > o.x &&
-    player.y < o.y + o.h &&
-    player.y + player.h > o.y
-  ) {
-if (!isGameOver) {
-  isGameOver = true;
-  saveHighScore(score);
-}
-  }
-});
+  // 衝突判定
+  obstacles.forEach(o => {
+    if (
+      player.x < o.x + o.w &&
+      player.x + player.w > o.x &&
+      player.y < o.y + o.h &&
+      player.y + player.h > o.y
+    ) {
+      if (!isGameOver) {
+        isGameOver = true;
+        saveHighScore(score);
+      }
+    }
+  });
 
-  // ランダム生成
   if (Math.random() < 0.025) createObstacle();
-
 }
 
+/* =====================
+   描画
+===================== */
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // スコア表示
+  // スコア
   ctx.fillStyle = "black";
   ctx.font = "bold 24px sans-serif";
   ctx.fillText("SCORE : " + score, 20, 40);
- 
-  ctx.fillStyle = "black";
   ctx.font = "bold 20px sans-serif";
-  
+  ctx.fillText("HI : " + (highScores[0] || 0), 20, 70);
+
   // 地面
   ctx.fillStyle = "green";
-  ctx.fillRect(0, groundY, canvas.width, 80);
+  ctx.fillRect(0, groundY, window.innerWidth, 80);
 
-  // プレイヤー// プレイヤー（画像）
-  ctx.drawImage(
-    playerImg,
-    player.x,
-    player.y,
-    player.w,
-    player.h
-  );
+  // プレイヤー
+  ctx.drawImage(playerImg, player.x, player.y, player.w, player.h);
 
   // 障害物
   ctx.fillStyle = "black";
   obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
- 
-ctx.font = "bold 20px sans-serif";
-ctx.fillText("HI : " + (highScores[0] || 0), 20, 70);
- 
-if (isGameOver) {
-  ctx.fillStyle = "black";
-  ctx.font = "bold 36px sans-serif";
-  ctx.fillText(
-    "GAME OVER",
-    canvas.width / 2 - 120,
-    canvas.height / 2 - 200
-  );
 
-  ctx.font = "20px sans-serif";
-  ctx.fillText(
-    "SCORE : " + score,
-    canvas.width / 2 - 60,
-    canvas.height / 2 - 150
-  );
+  // GAME OVER
+  if (isGameOver) {
+    ctx.fillStyle = "black";
+    ctx.font = "bold 36px sans-serif";
+    ctx.fillText("GAME OVER", window.innerWidth / 2 - 120, 150);
 
-  ctx.font = "18px sans-serif";
-  ctx.fillText(
-    "タップでリスタート",
-    canvas.width / 2 - 90,
-    canvas.height / 2 + 100
-  );
+    ctx.font = "20px sans-serif";
+    ctx.fillText("SCORE : " + score, window.innerWidth / 2 - 60, 190);
 
-ctx.font = "20px sans-serif";
-ctx.fillText(
-  "HI-SCORE",
-  canvas.width / 2 - 60,
-  canvas.height / 2 - 100
-);
+    ctx.fillText("TOP SCORES", window.innerWidth / 2 - 60, 240);
 
-highScores.forEach((s, i) => {
-  ctx.fillText(
-    `${i + 1}. ${s}`,
-    canvas.width / 2 - 40,
-    canvas.height / 2 - 70 + i * 25
-  );
-});
- 
-}
+    highScores.forEach((s, i) => {
+      ctx.fillText(
+        `${i + 1}. ${s}`,
+        window.innerWidth / 2 - 40,
+        270 + i * 25
+      );
+    });
+
+    ctx.font = "18px sans-serif";
+    ctx.fillText("タップでリスタート", window.innerWidth / 2 - 90, 360);
+  }
 }
 
+/* =====================
+   ハイスコア
+===================== */
 function saveHighScore(newScore) {
   highScores.push(newScore);
-
-  // 高い順に並び替え
   highScores.sort((a, b) => b - a);
-
-  // 上位3つだけ残す
   highScores = highScores.slice(0, 3);
-
   localStorage.setItem("highScores", JSON.stringify(highScores));
 }
- 
+
+/* =====================
+   ループ
+===================== */
 function loop() {
   update();
   draw();
   requestAnimationFrame(loop);
 }
-
 </script>
+
 </body>
 </html>
