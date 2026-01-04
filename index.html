@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:15</title>
+<title>スマホ横スクロール ver:17</title>
 <style>
  
   body {
@@ -188,25 +188,18 @@ if (isGameOver) {
     canvas.height / 2 + 100
   );
 
-  ctx.font = "20px sans-serif";
-  ctx.fillText(
-    "HI-SCORE : " + (highScores[0] || 0) ,
-    canvas.width / 2 - 90,
-    canvas.height / 2 - 100
-  );
-
 ctx.font = "20px sans-serif";
 ctx.fillText(
-  "TOP SCORES",
+  "HI-SCORE",
   canvas.width / 2 - 60,
-  canvas.height / 2 + 60
+  canvas.height / 2 - 100
 );
 
 highScores.forEach((s, i) => {
   ctx.fillText(
     `${i + 1}. ${s}`,
     canvas.width / 2 - 40,
-    canvas.height / 2 + 90 + i * 25
+    canvas.height / 2 - 70 + i * 25
   );
 });
  
