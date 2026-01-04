@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:14</title>
+<title>スマホ横スクロール ver:15</title>
 <style>
  
   body {
@@ -178,21 +178,21 @@ if (isGameOver) {
   ctx.fillText(
     "SCORE : " + score,
     canvas.width / 2 - 60,
-    canvas.height / 2 + 20
+    canvas.height / 2 - 150
   );
 
   ctx.font = "18px sans-serif";
   ctx.fillText(
     "タップでリスタート",
     canvas.width / 2 - 90,
-    canvas.height / 2 + 90
+    canvas.height / 2 + 100
   );
 
   ctx.font = "20px sans-serif";
   ctx.fillText(
     "HI-SCORE : " + (highScores[0] || 0) ,
     canvas.width / 2 - 90,
-    canvas.height / 2 + 50
+    canvas.height / 2 - 100
   );
 
 ctx.font = "20px sans-serif";
