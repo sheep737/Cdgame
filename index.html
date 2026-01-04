@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>スマホ横スクロール ver:17</title>
+<title>スマホ横スクロール ver:18</title>
 <style>
  
   body {
@@ -29,10 +29,16 @@ playerImg.src = "player.png";
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-// 画面サイズをスマホに合わせる
 function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resize();
 window.addEventListener("resize", resize);
